@@ -8,6 +8,8 @@ package com.yahoo.egads.models.tsmm;
 
 import java.util.Properties;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.json.JSONStringer;
 
@@ -31,7 +33,8 @@ public abstract class TimeSeriesAbstractModel implements TimeSeriesModel {
     protected double sae;
     protected String modelName;
 
-    static org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger(TimeSeriesModel.class.getName());
+//    static org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger(TimeSeriesModel.class.getName());
+    static Logger logger = LogManager.getLogger(TimeSeriesAbstractModel.class);
 
     protected boolean errorsInit = false;
     protected int dynamicParameters = 0;

@@ -7,9 +7,10 @@
 package com.yahoo.egads.data;
 
 import com.yahoo.egads.data.TimeSeries.DataSequence;
-import java.util.Map;
-import java.util.HashMap;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AnomalyErrorStorage {
 
@@ -21,14 +22,6 @@ public class AnomalyErrorStorage {
     protected Map<Integer, String> indexToError;
     boolean isInit = false;
 
-    // Getter methods.
-    public Map<String, Integer> getErrorToIndex() {
-        return errorToIndex;
-    }
-    public Map<Integer, String> getIndexToError() {
-        return indexToError;
-    }
-    
     // Force the user to define this constructor that acts as a
     // factory method.
     public AnomalyErrorStorage() {
@@ -46,18 +39,31 @@ public class AnomalyErrorStorage {
         indexToError.put(3, "mape");
         indexToError.put(4, "mase");
     }
-    
+
+    // Getter methods.
+    public Map<String, Integer> getErrorToIndex() {
+        return errorToIndex;
+    }
+
+    public Map<Integer, String> getIndexToError() {
+        return indexToError;
+    }
+
+    public float getMaseDenom() {
+        return maseDenom;
+    }
+
     // Initializes all anomaly errors.
-    public HashMap<String, ArrayList<Float>> initAnomalyErrors(DataSequence observedSeries, DataSequence expectedSeries) {        
+    public HashMap<String, ArrayList<Float>> initAnomalyErrors(DataSequence observedSeries, DataSequence expectedSeries) {
         int n = observedSeries.size();
-        
+
         // init MASE.
         for (int i = 1; i < n; i++) {
             maseDenom += Math.abs(observedSeries.get(i).value - observedSeries.get(i - 1).value);
         }
         maseDenom = maseDenom / (n - 1);
         HashMap<String, ArrayList<Float>> allErrors = new HashMap<String, ArrayList<Float>>();
-        
+
         for (int i = 0; i < n; i++) {
             Float[] errors = computeErrorMetrics(expectedSeries.get(i).value, observedSeries.get(i).value);
             for (int j = 0; j < errors.length; j++) {
@@ -67,19 +73,19 @@ public class AnomalyErrorStorage {
                 ArrayList<Float> tmp = allErrors.get(indexToError.get(j));
                 tmp.add(errors[j]);
                 allErrors.put(indexToError.get(j), tmp);
-            }            
+            }
         }
         isInit = true;
         return allErrors;
     }
-    
+
     // Computes the standard error metrics including MAE, sMAPE, MAPE, MASE.
     public Float[] computeErrorMetrics(float expected, float actual) {
         float div = expected;
         if (expected == (float) 0.0) {
-          div = (float) 0.0000000001;
+            div = (float) 0.0000000001;
         }
-        
+
         // Mean Absolute Error.
         float mae = Math.abs(actual - expected);
         // Symmetric Mean Absolute Error.
@@ -90,7 +96,7 @@ public class AnomalyErrorStorage {
         float mase = Math.abs(maseDenom) == 0.0 ? (float) 0.0 : Math.abs(actual - expected) / Math.abs(maseDenom);
         // Mean Absolute Percentage Error (scaled by the expected value).
         float mapee = (expected == actual) ? (float) 0.0 : Math.abs((100 * ((actual / div) - 1)));
-        
+
         // Store all errors.
         Float[] errors = new Float[5];
         errors[0] = mapee;
@@ -98,7 +104,7 @@ public class AnomalyErrorStorage {
         errors[2] = smape;
         errors[3] = mape;
         errors[4] = mase;
-        
+
         return errors;
     }
 }

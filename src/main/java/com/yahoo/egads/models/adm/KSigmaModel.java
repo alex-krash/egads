@@ -47,6 +47,10 @@ public class KSigmaModel extends AnomalyDetectionAbstractModel {
         } 
     }
 
+    public Map<String,Float> getThreshold() {
+        return threshold;
+    }
+
     public void toJson(JSONStringer json_out) {
 
     }

@@ -8,6 +8,8 @@ package com.yahoo.egads.models.adm;
 
 import java.util.Properties;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.json.JSONStringer;
 import java.util.Map;
@@ -17,7 +19,7 @@ import com.yahoo.egads.data.JsonEncoder;
 
 public abstract class AnomalyDetectionAbstractModel implements AnomalyDetectionModel {
 
-    protected org.apache.logging.log4j.Logger logger;
+    protected Logger logger;
     protected float sDAutoSensitivity = 3;
     protected float amntAutoSensitivity = (float) 0.05;
     protected String outputDest = "";
@@ -79,7 +81,7 @@ public abstract class AnomalyDetectionAbstractModel implements AnomalyDetectionM
     // Force the user to define this constructor that acts as a
     // factory method.
     public AnomalyDetectionAbstractModel(Properties config) {
-    	logger = org.apache.logging.log4j.LogManager.getLogger(this.getClass().getName());
+    	logger = LogManager.getLogger(this.getClass().getName());
         // Set the assumed amount of anomaly in your data.
         if (config.getProperty("AUTO_SENSITIVITY_ANOMALY_PCNT") != null) {
             this.amntAutoSensitivity = new Float(config.getProperty("AUTO_SENSITIVITY_ANOMALY_PCNT"));
